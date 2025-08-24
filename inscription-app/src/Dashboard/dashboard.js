@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable no-unused-vars */
 import { useState, useEffect, useCallback } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -191,7 +192,6 @@ const Dashboard = () => {
     endDate: ''
   });
   const [showDashboardFilters, setShowDashboardFilters] = useState(false);
-
   // Load data from localStorage with error handling
   useEffect(() => {
     const loadFromLocalStorage = () => {
@@ -640,17 +640,14 @@ const Dashboard = () => {
   };
   const getDashboardData = () => {
     const { startDate, endDate, category, type } = dashboardFilters;
-    
     let expensesForPeriod;
     let incomesForPeriod;
-    
     if (startDate && endDate) {
       // Use custom date range
       const start = new Date(startDate);
       const end = new Date(endDate);
       const year = start.getFullYear();
       const month = start.getMonth();
-      
       expensesForPeriod = getExpensesForPeriod(year, month, startDate, endDate);
       incomesForPeriod = getIncomesForPeriod(year, month, startDate, endDate);
     } else {
@@ -658,7 +655,6 @@ const Dashboard = () => {
       expensesForPeriod = getExpensesForCurrentMonth();
       incomesForPeriod = getIncomesForCurrentMonth();
     }
-    
     // Apply category and type filters
     if (category) {
       expensesForPeriod = expensesForPeriod.filter(exp => exp.category === category);
@@ -666,11 +662,9 @@ const Dashboard = () => {
     if (type) {
       expensesForPeriod = expensesForPeriod.filter(exp => exp.type === type);
     }
-    
     const totalExpenses = expensesForPeriod.reduce((total, exp) => total + exp.calculatedAmount, 0);
     const totalIncomes = incomesForPeriod.reduce((total, inc) => total + parseFloat(inc.amount), 0);
     const balance = totalIncomes - totalExpenses;
-    
     // Calculate category distribution
     const categoryData = {};
     expensesForPeriod.forEach(expense => {
@@ -679,27 +673,22 @@ const Dashboard = () => {
       }
       categoryData[expense.category] += expense.calculatedAmount;
     });
-    
     // Calculate monthly trend (last 6 months)
     const monthlyData = [];
     const today = new Date();
     const currentYear = today.getFullYear();
     const currentMonth = today.getMonth();
-    
     for (let i = 5; i >= 0; i--) {
       const date = new Date(currentYear, currentMonth - i, 1);
       const year = date.getFullYear();
       const month = date.getMonth();
-      
       const monthExpenses = getExpensesForPeriod(year, month);
       const monthTotal = monthExpenses.reduce((total, exp) => total + exp.calculatedAmount, 0);
-      
       monthlyData.push({
         month: date.toLocaleDateString('fr-FR', { month: 'short', year: '2-digit' }),
         expenses: monthTotal
       });
     }
-    
     return {
       totalExpenses,
       totalIncomes,
@@ -708,16 +697,13 @@ const Dashboard = () => {
       monthlyData
     };
   };
-  
   const dashboardData = getDashboardData();
-  
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('fr-FR', {
       style: 'currency',
       currency: 'EUR'
     }).format(amount);
   };
-
   return (
     <div className={`min-h-screen d-flex flex-column ${darkMode ? 'bg-dark text-light' : 'bg-light text-dark'}`}>
       <style>
@@ -950,6 +936,12 @@ const Dashboard = () => {
                     Profil & Paramètres
                   </button>
                 </li>
+                <li className="nav-item">
+                    <a href="/date" onClick={handleLogout} className="nav-link text-start w-100 d-flex align-items-center text-white rounded mb-2">
+                        <FontAwesomeIcon icon={faSignOutAlt} className="me-2" />
+                        Déconnexion
+                    </a>
+                </li>
               </ul>
             </div>
           </aside>
@@ -963,7 +955,6 @@ const Dashboard = () => {
                     <span>Filtres</span>
                   </div>
                 </div>
-                
                 {showDashboardFilters && (
                   <div className="dashboard-filters">
                     <div className="row">
@@ -1034,7 +1025,6 @@ const Dashboard = () => {
                     </div>
                   </div>
                 )}
-                
                 <div className="row mb-4">
                   <div className="col-md-3 mb-3">
                     <div className={`card ${darkMode ? 'bg-secondary text-light' : 'bg-white text-dark'} shadow-sm`}>
@@ -1094,7 +1084,6 @@ const Dashboard = () => {
                     </div>
                   </div>
                 </div>
-
                 <div className="row">
                   <div className="col-lg-6 mb-4">
                     <div className={`card ${darkMode ? 'bg-secondary text-light' : 'bg-white text-dark'} shadow-sm chart-container`}>
@@ -1110,7 +1099,6 @@ const Dashboard = () => {
                                   let cumulativePercentage = 0;
                                   const total = Object.values(dashboardData.categoryData).reduce((a, b) => a + b, 0);
                                   const colors = ['#0b5ed7', '#6f42c1', '#28a745', '#ffc107', '#dc3545', '#adb5bd'];
-                                  
                                   return Object.entries(dashboardData.categoryData).map(([category, amount], index) => {
                                     const percentage = (amount / total) * 100;
                                     const sweepFlag = percentage > 50 ? 1 : 0;
@@ -1118,17 +1106,14 @@ const Dashboard = () => {
                                     const y1 = 50 + 45 * Math.sin(2 * Math.PI * cumulativePercentage / 100);
                                     const x2 = 50 + 45 * Math.cos(2 * Math.PI * (cumulativePercentage + percentage) / 100);
                                     const y2 = 50 + 45 * Math.sin(2 * Math.PI * (cumulativePercentage + percentage) / 100);
-                                    
                                     const pathData = `
                                       M 50 50
                                       L ${x1} ${y1}
                                       A 45 45 0 ${sweepFlag} 1 ${x2} ${y2}
                                       Z
                                     `;
-                                    
                                     const color = colors[index % colors.length];
                                     cumulativePercentage += percentage;
-                                    
                                     return (
                                       <path
                                         key={category}
@@ -1147,7 +1132,6 @@ const Dashboard = () => {
                                 const total = Object.values(dashboardData.categoryData).reduce((a, b) => a + b, 0);
                                 const percentage = total > 0 ? Math.round((amount / total) * 100) : 0;
                                 const color = ['#0b5ed7', '#6f42c1', '#28a745', '#ffc107', '#dc3545', '#adb5bd'][index % 6];
-                                
                                 return (
                                   <div key={category} className="d-flex align-items-center mb-2">
                                     <div 
@@ -1519,7 +1503,6 @@ const Dashboard = () => {
                       )}
                     </div>
                   </div>
-                  
                   <div className={`card ${darkMode ? 'bg-secondary text-light' : 'bg-white text-dark'} shadow-sm mb-4`}>
                     <div className="card-header">
                       <h5 className="mb-0">Notifications</h5>
@@ -1575,27 +1558,6 @@ const Dashboard = () => {
                             onChange={handleNotificationChange}
                           />
                         </div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className={`card ${darkMode ? 'bg-secondary text-light' : 'bg-white text-dark'} shadow-sm`}>
-                    <div className="card-body text-center">
-                      <div className="d-flex flex-column align-items-center">
-                        <div className="p-2 bg-danger text-white rounded mb-3">
-                          <FontAwesomeIcon icon={faSignOutAlt} size="2x" />
-                        </div>
-                        <h6 className="mb-2">Déconnexion</h6>
-                        <p className="text-muted text-center mb-3">
-                          Quittez votre session en toute sécurité
-                        </p>
-                        <button 
-                          className="logout-btn"
-                          onClick={handleLogout}
-                        >
-                          <FontAwesomeIcon icon={faSignOutAlt} />
-                          Se déconnecter
-                        </button>
                       </div>
                     </div>
                   </div>
