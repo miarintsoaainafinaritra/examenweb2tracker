@@ -1,0 +1,330 @@
+openapi: 3.0.0
+info:
+  title: Smart Personal Expense Tracker API
+  description: REST API for managing personal expenses, incomes, receipts, and categories.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/api
+paths:
+  /auth/signup:
+    post:
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '201':
+          description: User created
+  /auth/login:
+    post:
+      summary: Login and receive JWT token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Token returned
+  /expenses:
+    get:
+      summary: List all user expenses
+      parameters:
+        - in: query
+          name: start
+          schema:
+            type: string
+          description: Start date
+        - in: query
+          name: end
+          schema:
+            type: string
+          description: End date
+        - in: query
+          name: category
+          schema:
+            type: string
+        - in: query
+          name: type
+          schema:
+            type: string
+            enum: [recurring, one-time]
+      responses:
+        '200':
+          description: List of expenses
+    post:
+      summary: Create a new expense
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [amount, date, categoryId]
+              properties:
+                amount:
+                  type: number
+                date:
+                  type: string
+                categoryId:
+                  type: string
+                description:
+                  type: string
+                type:
+                  type: string
+                  enum: [one-time, recurring]
+                startDate:
+                  type: string
+                endDate:
+                  type: string
+                receipt:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: Expense created
+  /expenses/{id}:
+    parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+    get:
+      summary: Get a single expense
+      responses:
+        '200':
+          description: Expense data
+    put:
+      summary: Update an expense
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                amount:
+                  type: number
+                date:
+                  type: string
+                categoryId:
+                  type: string
+                description:
+                  type: string
+                type:
+                  type: string
+                  enum: [one-time, recurring]
+                startDate:
+                  type: string
+                endDate:
+                  type: string
+                receipt:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Expense updated
+    delete:
+      summary: Delete an expense
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Expense deleted
+  /incomes:
+    get:
+      summary: List all incomes
+      parameters:
+        - in: query
+          name: start
+          schema:
+            type: string
+        - in: query
+          name: end
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of incomes
+    post:
+      summary: Create new income
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [amount, date]
+              properties:
+                amount:
+                  type: number
+                date:
+                  type: string
+                source:
+                  type: string
+                description:
+                  type: string
+      responses:
+        '201':
+          description: Income created
+  /incomes/{id}:
+    parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+    get:
+      summary: Get an income entry
+      responses:
+        '200':
+          description: Income data
+    put:
+      summary: Update an income entry
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                amount:
+                  type: number
+                date:
+                  type: string
+                source:
+                  type: string
+                description:
+                  type: string
+      responses:
+        '200':
+          description: Income updated
+    delete:
+      summary: Delete an income entry
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Income deleted
+  /categories:
+    get:
+      summary: List user categories
+      responses:
+        '200':
+          description: List of categories
+    post:
+      summary: Create new category
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name:
+                  type: string
+      responses:
+        '201':
+          description: Category created
+  /categories/{id}:
+    put:
+      summary: Rename a category
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+      responses:
+        '200':
+          description: Category updated
+    delete:
+      summary: Delete a category
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Category deleted
+  /summary/monthly:
+    get:
+      summary: Get current month summary
+      parameters:
+        - in: query
+          name: month
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Monthly summary
+  /summary:
+    get:
+      summary: Get summary for custom range
+      parameters:
+        - in: query
+          name: start
+          schema:
+            type: string
+        - in: query
+          name: end
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Summary
+  /summary/alerts:
+    get:
+      summary: Budget overrun alert
+      responses:
+        '200':
+          description: Alert info
+  /receipts/{id}:
+    get:
+      summary: Download/view receipt
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Receipt file
+  /user/profile:
+    get:
+      summary: Get user profile
+      responses:
+        '200':
+          description: Profile info
