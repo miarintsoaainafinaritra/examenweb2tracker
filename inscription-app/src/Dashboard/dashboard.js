@@ -1,3 +1,4 @@
+/* eslint-disable no-template-curly-in-string */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable no-unused-vars */
 import { useState, useEffect, useCallback } from 'react';
@@ -717,9 +718,6 @@ const Dashboard = () => {
           .text-blue {
             color: #0b5ed7 !important;
           }
-          .bg-purple {
-            background-color: #6f42c1 !important;
-          }
           .bg-dark-blue {
             background-color: #004085 !important;
           }
@@ -731,6 +729,34 @@ const Dashboard = () => {
           }
           .text-yellow {
             color: #ffc107 !important;
+          }
+          .bg-success-light {
+            background-color: #d4edda !important;
+            border-color: #c3e6cb;
+          }
+          .bg-danger-light {
+            background-color: #f8d7da !important;
+            border-color: #f5c6cb;
+          }
+          .bg-warning-light {
+            background-color: #fff3cd !important;
+            border-color: #ffeaa7;
+          }
+          .bg-primary-light {
+            background-color: #cce5ff !important;
+            border-color: #b8daff;
+          }
+          .text-success-dark {
+            color: #155724 !important;
+          }
+          .text-danger-dark {
+            color: #721c24 !important;
+          }
+          .text-warning-dark {
+            color: #856404 !important;
+          }
+          .text-primary-dark {
+            color: #004085 !important;
           }
           .modern-table {
             border-collapse: separate;
@@ -840,6 +866,77 @@ const Dashboard = () => {
           }
           .logout-btn:hover {
             background-color: #c82333;
+          }
+          .pie-chart-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+            justify-content: center;
+          }
+          .legend-item {
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+          }
+          .legend-color {
+            width: 12px;
+            height: 12px;
+            margin-right: 6px;
+            border-radius: 2px;
+          }
+          .line-chart {
+            width: 100%;
+            height: 250px;
+            position: relative;
+          }
+          .line-chart-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(to right, transparent 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(0,0,0,0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: 1;
+          }
+          .line-chart-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+          }
+          .line-chart-path {
+            fill: none;
+            stroke: #dc3545;
+            stroke-width: 3;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+          }
+          .line-chart-points {
+            fill: #dc3545;
+          }
+          .line-chart-labels {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 20px 0 20px;
+            z-index: 3;
+          }
+          .chart-label {
+            text-align: center;
+            font-size: 0.8rem;
+            color: ${darkMode ? '#e9ecef' : '#495057'};
+          }
+          .chart-value {
+            font-weight: bold;
+            margin-top: 2px;
           }
         `}
       </style>
@@ -1027,57 +1124,57 @@ const Dashboard = () => {
                 )}
                 <div className="row mb-4">
                   <div className="col-md-3 mb-3">
-                    <div className={`card ${darkMode ? 'bg-secondary text-light' : 'bg-white text-dark'} shadow-sm`}>
+                    <div className={`card bg-success-light shadow-sm border-success`}>
                       <div className="card-body">
                         <div className="d-flex justify-content-between align-items-center">
-                          <h5 className="card-title">Revenus</h5>
+                          <h5 className="card-title text-success-dark">Revenus</h5>
                           <FontAwesomeIcon icon={faMoneyBillWave} className="text-success fs-4" />
                         </div>
                         <p className="card-text display-6 fw-bold text-success">{formatCurrency(dashboardData.totalIncomes)}</p>
-                        <p className={`card-text small ${darkMode ? 'text-light' : 'text-muted'}`}>Total des revenus</p>
+                        <p className="card-text small text-success-dark">Total des revenus</p>
                       </div>
                     </div>
                   </div>
                   <div className="col-md-3 mb-3">
-                    <div className={`card ${darkMode ? 'bg-secondary text-light' : 'bg-white text-dark'} shadow-sm`}>
+                    <div className={`card bg-warning-light shadow-sm border-warning`}>
                       <div className="card-body">
                         <div className="d-flex justify-content-between align-items-center">
-                          <h5 className="card-title">Dépenses</h5>
-                          <FontAwesomeIcon icon={faReceipt} className="text-danger fs-4" />
+                          <h5 className="card-title text-warning-dark">Dépenses</h5>
+                          <FontAwesomeIcon icon={faReceipt} className="text-warning fs-4" />
                         </div>
-                        <p className="card-text display-6 fw-bold text-danger">{formatCurrency(dashboardData.totalExpenses)}</p>
-                        <p className={`card-text small ${darkMode ? 'text-light' : 'text-muted'}`}>Total des dépenses</p>
+                        <p className="card-text display-6 fw-bold text-warning">{formatCurrency(dashboardData.totalExpenses)}</p>
+                        <p className="card-text small text-warning-dark">Total des dépenses</p>
                       </div>
                     </div>
                   </div>
                   <div className="col-md-3 mb-3">
-                    <div className={`card ${darkMode ? 'bg-secondary text-light' : 'bg-white text-dark'} shadow-sm`}>
+                    <div className={`card ${dashboardData.balance >= 0 ? 'bg-success-light border-success' : 'bg-danger-light border-danger'} shadow-sm`}>
                       <div className="card-body">
                         <div className="d-flex justify-content-between align-items-center">
-                          <h5 className="card-title">Solde</h5>
-                          <FontAwesomeIcon icon={faWallet} className="text-blue fs-4" />
+                          <h5 className="card-title ${dashboardData.balance >= 0 ? 'text-success-dark' : 'text-danger-dark'}">Solde</h5>
+                          <FontAwesomeIcon icon={faWallet} className={`${dashboardData.balance >= 0 ? 'text-success' : 'text-danger'} fs-4`} />
                         </div>
                         <p className={`card-text display-6 fw-bold ${dashboardData.balance >= 0 ? 'text-success' : 'text-danger'}`}>
                           {formatCurrency(dashboardData.balance)}
                         </p>
-                        <p className={`card-text small ${darkMode ? 'text-light' : 'text-muted'}`}>
+                        <p className={`card-text small ${dashboardData.balance >= 0 ? 'text-success-dark' : 'text-danger-dark'}`}>
                           {dashboardData.balance >= 0 ? 'Excédent' : 'Déficit'}
                         </p>
                       </div>
                     </div>
                   </div>
                   <div className="col-md-3 mb-3">
-                    <div className={`card ${darkMode ? 'bg-secondary text-light' : 'bg-white text-dark'} shadow-sm`}>
+                    <div className={`card bg-primary-light shadow-sm border-primary`}>
                       <div className="card-body">
                         <div className="d-flex justify-content-between align-items-center">
-                          <h5 className="card-title">Taux d'épargne</h5>
-                          <FontAwesomeIcon icon={faChartBar} className="text-blue fs-4" />
+                          <h5 className="card-title text-primary-dark">Taux d'épargne</h5>
+                          <FontAwesomeIcon icon={faChartBar} className="text-primary fs-4" />
                         </div>
-                        <p className="card-text display-6 fw-bold text-blue">
+                        <p className="card-text display-6 fw-bold text-primary">
                           {dashboardData.totalIncomes > 0 ? 
                             `${Math.round((dashboardData.balance / dashboardData.totalIncomes) * 100)}%` : '0%'}
                         </p>
-                        <p className={`card-text small ${darkMode ? 'text-light' : 'text-muted'}`}>
+                        <p className="card-text small text-primary-dark">
                           {dashboardData.balance >= 0 ? 'Épargné' : 'Dépensé'}
                         </p>
                       </div>
@@ -1093,12 +1190,12 @@ const Dashboard = () => {
                       <div className="card-body">
                         {Object.keys(dashboardData.categoryData).length > 0 ? (
                           <div className="d-flex flex-column align-items-center">
-                            <div style={{ width: '200px', height: '200px', position: 'relative' }}>
+                            <div style={{ width: '250px', height: '250px', position: 'relative' }}>
                               <svg viewBox="0 0 100 100" style={{ width: '100%', height: '100%' }}>
                                 {(() => {
                                   let cumulativePercentage = 0;
                                   const total = Object.values(dashboardData.categoryData).reduce((a, b) => a + b, 0);
-                                  const colors = ['#0b5ed7', '#6f42c1', '#28a745', '#ffc107', '#dc3545', '#adb5bd'];
+                                  const colors = ['#28a745', '#007bff', '#ffc107', '#17a2b8', '#6f42c1', '#fd7e14'];
                                   return Object.entries(dashboardData.categoryData).map(([category, amount], index) => {
                                     const percentage = (amount / total) * 100;
                                     const sweepFlag = percentage > 50 ? 1 : 0;
@@ -1121,30 +1218,25 @@ const Dashboard = () => {
                                         fill={color}
                                         stroke={darkMode ? '#3a3a3a' : '#fff'}
                                         strokeWidth="2"
+                                        style={{ transition: 'all 0.3s ease' }}
                                       />
                                     );
                                   });
                                 })()}
                               </svg>
                             </div>
-                            <div className="mt-4 w-100">
+                            <div className="pie-chart-legend">
                               {Object.entries(dashboardData.categoryData).map(([category, amount], index) => {
                                 const total = Object.values(dashboardData.categoryData).reduce((a, b) => a + b, 0);
                                 const percentage = total > 0 ? Math.round((amount / total) * 100) : 0;
-                                const color = ['#0b5ed7', '#6f42c1', '#28a745', '#ffc107', '#dc3545', '#adb5bd'][index % 6];
+                                const colors = ['#28a745', '#007bff', '#ffc107', '#17a2b8', '#6f42c1', '#fd7e14'];
+                                const color = colors[index % colors.length];
                                 return (
-                                  <div key={category} className="d-flex align-items-center mb-2">
-                                    <div 
-                                      style={{ 
-                                        width: '12px', 
-                                        height: '12px', 
-                                        backgroundColor: color,
-                                        marginRight: '8px'
-                                      }}
-                                    ></div>
-                                    <span style={{ flex: 1 }}>{category}</span>
-                                    <span className="fw-bold">{formatCurrency(amount)}</span>
-                                    <span className="ms-2 text-muted">({percentage}%)</span>
+                                  <div key={category} className="legend-item">
+                                    <div className="legend-color" style={{ backgroundColor: color }}></div>
+                                    <div>
+                                      <strong>{category}</strong>: {formatCurrency(amount)} ({percentage}%)
+                                    </div>
                                   </div>
                                 );
                               })}
@@ -1167,43 +1259,62 @@ const Dashboard = () => {
                       <div className="card-body">
                         {dashboardData.monthlyData.length > 0 ? (
                           <div className="d-flex flex-column align-items-center">
-                            <div style={{ width: '100%', height: '250px', position: 'relative' }}>
-                              <div style={{ 
-                                display: 'flex', 
-                                height: '100%', 
-                                alignItems: 'flex-end', 
-                                gap: '10px',
-                                padding: '20px 0 10px 0'
-                              }}>
+                            <div className="line-chart">
+                              <div className="line-chart-grid"></div>
+                              <svg className="line-chart-line">
+                                <defs>
+                                  <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" stopColor="#dc3545" stopOpacity="0.3"/>
+                                    <stop offset="100%" stopColor="#dc3545" stopOpacity="0"/>
+                                  </linearGradient>
+                                </defs>
+                                <path 
+                                  className="line-chart-path" 
+                                  d={(() => {
+                                    const max = Math.max(...dashboardData.monthlyData.map(d => d.expenses));
+                                    const points = dashboardData.monthlyData.map((data, index) => {
+                                      const x = (index / (dashboardData.monthlyData.length - 1)) * 100;
+                                      const y = 100 - (data.expenses / max) * 80;
+                                      return `${x},${y}`;
+                                    }).join(' L ');
+                                    return `M ${points} L 100,100 L 0,100 Z`;
+                                  })()}
+                                  fill="url(#gradient)"
+                                />
+                                <path 
+                                  className="line-chart-path" 
+                                  d={(() => {
+                                    const max = Math.max(...dashboardData.monthlyData.map(d => d.expenses));
+                                    return dashboardData.monthlyData.map((data, index) => {
+                                      const x = (index / (dashboardData.monthlyData.length - 1)) * 100;
+                                      const y = 100 - (data.expenses / max) * 80;
+                                      return `${index === 0 ? 'M' : 'L'} ${x},${y}`;
+                                    }).join(' ');
+                                  })()}
+                                />
+                                {dashboardData.monthlyData.map((data, index) => {
+                                  const max = Math.max(...dashboardData.monthlyData.map(d => d.expenses));
+                                  const x = (index / (dashboardData.monthlyData.length - 1)) * 100;
+                                  const y = 100 - (data.expenses / max) * 80;
+                                  return (
+                                    <circle 
+                                      key={index}
+                                      className="line-chart-points"
+                                      cx={`${x}%`}
+                                      cy={`${y}%`}
+                                      r="4"
+                                      style={{ transition: 'all 0.3s ease' }}
+                                    />
+                                  );
+                                })}
+                              </svg>
+                              <div className="line-chart-labels">
                                 {dashboardData.monthlyData.map((data, index) => (
-                                  <div key={index} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                    <div 
-                                      style={{ 
-                                        width: '100%', 
-                                        height: `${Math.min((data.expenses / Math.max(...dashboardData.monthlyData.map(d => d.expenses))) * 100, 100)}%`, 
-                                        backgroundColor: '#dc3545',
-                                        borderRadius: '4px 4px 0 0'
-                                      }}
-                                    ></div>
-                                    <div className="mt-2 text-center" style={{ fontSize: '0.8rem' }}>
-                                      <div>{data.month}</div>
-                                      <div>{formatCurrency(data.expenses)}</div>
-                                    </div>
+                                  <div key={index} className="chart-label">
+                                    <div>{data.month}</div>
+                                    <div className="chart-value">{formatCurrency(data.expenses)}</div>
                                   </div>
                                 ))}
-                              </div>
-                            </div>
-                            <div className="mt-3 w-100">
-                              <div className="d-flex align-items-center">
-                                <div 
-                                  style={{ 
-                                    width: '12px', 
-                                    height: '12px', 
-                                    backgroundColor: '#dc3545',
-                                    marginRight: '8px'
-                                  }}
-                                ></div>
-                                <span>Dépenses</span>
                               </div>
                             </div>
                           </div>

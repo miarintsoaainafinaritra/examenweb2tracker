@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request # type: ignore
-from flask_cors import CORS # pyright: ignore[reportMissingModuleSource]
+from flask_cors import CORS # type: ignore
 import sqlite3
 from datetime import datetime
 
